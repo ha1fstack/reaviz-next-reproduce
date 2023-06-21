@@ -1,34 +1,90 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<!--
+PLEASE HELP US PROCESS GITHUB ISSUES FASTER BY PROVIDING THE FOLLOWING INFORMATION.
 
-## Getting Started
+ISSUES MISSING IMPORTANT INFORMATION MAY BE CLOSED WITHOUT INVESTIGATION.
+-->
 
-First, run the development server:
+## I'm submitting a...
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+<!-- Check one of the following options with "x" -->
+<pre><code>
+[ ] Regression (a behavior that used to work and stopped working in a new release)
+[O] Bug report  <!-- Please search GitHub for a similar issue or PR before submitting -->
+[ ] Performance issue
+[ ] Feature request
+[ ] Documentation issue or request
+[ ] Other... Please describe:
+</code></pre>
+
+## Current behavior
+
+<!-- Describe how the issue manifests. -->
+
+When using Next.js latest with App Router,
+the build fails if the page containing chart is static generated:
+
+```
+- info Collecting page data
+- info Generating static pages (0/4)TypeError: react_cool_dimensions_dist is not a function
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Expected behavior
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+<!-- Describe what the desired behavior would be. -->
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+The static page should be generated without error
 
-## Learn More
+## Minimal reproduction of the problem with instructions
 
-To learn more about Next.js, take a look at the following resources:
+Create new next project with create-next-app, using app router.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```tsx
+// page.tsx
+import { Chart } from "./Chart";
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+// if the page is not pre generated, it builds fine
+// export const dynamic = "force-dynamic";
 
-## Deploy on Vercel
+export default function Home() {
+  return <Chart />;
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```tsx
+// Chart.tsx
+"use client";
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+import { AreaChart } from "reaviz";
+
+export const Chart = () => {
+  return <AreaChart />;
+};
+```
+
+```
+npm run dev
+-> works fine
+```
+
+```
+npm run build
+-> - info Generating static pages (0/4)TypeError: react_cool_dimensions_dist is not a function
+-> when ssg is turned off it builds and runs fine (export const dynamic = "force-dynamic";)
+```
+
+## What is the motivation / use case for changing the behavior?
+
+<!-- Describe the motivation or the concrete use case. -->
+
+## Environment
+
+```
+Libs:
+- react version: latest
+- reaviz version: latest
+
+For Tooling issues:
+- Node version: 18
+- Platform:  Windows 11
+- Tested with both pnpm and npm
+```
